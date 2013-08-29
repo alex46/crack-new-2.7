@@ -1,0 +1,235 @@
+import java.util.*;
+
+public class CheckPalindrome {
+
+	public boolean solution1(Node n) {// use a stack
+		if (n == null || n.next == null) {
+			return true;
+		}
+		Stack<Node> stack = new Stack<Node>();
+		Node fastRunner = n;
+		Node slowRunner = n;
+		while (fastRunner != null && fastRunner.next != null) {
+			stack.push(slowRunner);
+			slowRunner = slowRunner.next;
+			fastRunner = fastRunner.next.next;
+		}
+		if (fastRunner != null) {
+			slowRunner = slowRunner.next;
+		}
+		while (slowRunner != null) {
+			if (slowRunner.data != stack.pop().data) {
+				return false;
+			}
+			slowRunner = slowRunner.next;
+		}
+		return true;
+	}
+
+	public boolean solution2(LinkedList l) {// recursive
+		if(l == null) {
+			return false;
+		}
+		Result p = isPalindromeRecurse(l.head, l.size());
+		return p.b;
+	}
+
+	public Result isPalindromeRecurse(Node n, int length) {
+		if (n == null || length == 0) {
+			return new Result(n, true);
+		}
+		if (length == 1) {
+			return new Result(n.next, true);
+		}
+		Result res = isPalindromeRecurse(n.next, length - 2);
+		if (res.n.data == n.data && res.b == true) {
+			res.n = res.n.next;
+		} else {
+			res.b = false;
+		}
+
+		return res;
+	}
+
+	class Result {
+		public Node n;
+		public boolean b;
+
+		Result(Node n, boolean b) {
+			this.n = n;
+			this.b = b;
+		}
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		LinkedList test = new LinkedList();
+		test.insertAtFront(5);
+		test.insertAtFront(4);
+		test.insertAtFront(3);
+		test.insertAtFront(2);
+		test.insertAtFront(1);
+		test.insertAtFront(2);
+		test.insertAtFront(3);
+		test.insertAtFront(4);
+		test.insertAtFront(5);
+		test.printList();
+		System.out.println();
+		CheckPalindrome t = new CheckPalindrome();
+		System.out.println(t.solution2(test));
+	}
+
+}
+
+
+public class LinkedList {
+	Node head;
+	Node tail;
+
+	public LinkedList() {
+		head = tail = null;
+	}
+
+	public void insertAtFront(int data) {
+		if (head == null) {
+			head = tail = new Node(data);
+		} else {
+			head = new Node(data, head);
+		}
+	}
+
+	public void insertAtEnd(int data) {
+		if (head == null) {
+			head = tail = new Node(data);
+		} else {
+			// tail.setNext(new Node(data));
+			// tail = tail.getNext();
+			tail = tail.next = new Node(data);
+		}
+	}
+
+	public void removeEnd() {
+		if (head == null) {
+			System.out.println("This list is empty!");
+			return;
+		} else {
+			if (head == tail) {// important!
+				head = tail = null;
+				return;
+			}
+			Node current = head;
+			while (current.next != tail) {
+				current = current.next;
+			}
+			current.next = null;
+			tail = current;
+		}
+	}
+
+	public void removeFront() {
+		if (head == null) {
+			System.out.println("This list is empty!");
+			return;
+		} else {
+			// if(head == tail){//important!
+			// head =tail = null;
+			// return;
+			// }//actually not necessary, because head ?= null is always checked
+			if (head == tail) {
+				head = tail = null;
+			} else {
+				head = head.next;
+			}
+		}
+	}
+
+	public void printList() {
+		if (head == null) {
+			System.out.println("This list is empty!");
+		} else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.getData() + " ");
+				current = current.getNext();
+			}
+		}
+	}
+
+	public int size() {
+		if (head == null) {
+			return 0;
+		} else {
+			int size = 0;
+			Node current = head;
+			while (current != null) {
+				size++;
+				current = current.next;
+			}
+			return size;
+		}
+	}
+
+	public static void main(String[] args) {
+		LinkedList test = new LinkedList();
+		test.insertAtFront(1);
+		test.insertAtFront(2);
+		test.insertAtFront(3);
+		test.insertAtFront(4);
+		test.insertAtFront(5);
+		test.printList();
+		System.out.println();
+		test.insertAtEnd(1);
+		test.insertAtEnd(2);
+		test.insertAtEnd(3);
+		test.insertAtEnd(4);
+		test.insertAtEnd(5);
+		test.printList();
+		System.out.println();
+		test.removeEnd();
+		test.printList();
+		System.out.println();
+		test.removeFront();
+		test.printList();
+		System.out.println();
+		System.out.println("The size of the list is: " + test.size());
+		System.out.println();
+		LinkedList test2 = new LinkedList();
+		test2.insertAtEnd(0);
+		test2.removeEnd();
+		test2.insertAtFront(0);
+		test2.removeFront();
+		test2.printList();
+
+	}
+}
+
+class Node {
+	int data;
+	Node next;
+
+	Node(int data, Node next) {
+		this.data = data;
+		this.next = next;
+	}
+
+	Node(int data) {
+		this.data = data;
+		this.next = null;
+	}
+
+	int getData() {
+		return this.data;
+	}
+
+	Node getNext() {
+		return this.next;
+	}
+
+	void setData(int data) {
+		this.data = data;
+	}
+
+	void setNext(Node next) {
+		this.next = next;
+	}
+}
